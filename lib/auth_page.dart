@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -17,6 +18,11 @@ class _AuthState extends State<AuthPage> {
   final loginController = TextEditingController();
   final passwordController = TextEditingController();
 
+  var login = '';
+  var password = '';
+
+  var _onLoginClickAction = () {};
+
   @override
   void initState() {
     super.initState();
@@ -25,6 +31,30 @@ class _AuthState extends State<AuthPage> {
     progressDialog.style(
       message: 'Пожалуйста подождите..',
     );
+
+    loginController.addListener(() {
+      setState(() {
+        login = loginController.text;
+        updateLoginClickActionState();
+      });
+    });
+
+    passwordController.addListener(() {
+      setState(() {
+        password = passwordController.text;
+        updateLoginClickActionState();
+      });
+    });
+
+    updateLoginClickActionState();
+  }
+
+  void updateLoginClickActionState() {
+    _onLoginClickAction = areFieldsValid()
+        ? () {
+            onLoginClick(context);
+          }
+        : null;
   }
 
   @override
@@ -64,23 +94,26 @@ class _AuthState extends State<AuthPage> {
               Padding(
                   padding: EdgeInsets.only(left: 32, right: 32),
                   child: ButtonTheme(
-                      height: 64,
-                      minWidth: double.infinity,
-                      child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(90.0),
-                            side: BorderSide(color: Colors.blue)),
-                        onPressed: () {
-                          onLoginClick(context);
-                        },
-                        textColor: Colors.white,
-                        color: Colors.blue,
-                        child: Text('Добро пожаловать!',
-                            style: TextStyle(fontSize: 21)),
-                      )))
+                    height: 64,
+                    minWidth: double.infinity,
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(90.0),
+                          side: BorderSide(color: Colors.blue)),
+                      onPressed: _onLoginClickAction,
+                      textColor: Colors.white,
+                      color: Colors.blue,
+                      child: Text('Добро пожаловать!',
+                          style: TextStyle(fontSize: 21)),
+                    ),
+                  ))
             ],
           ),
         ]));
+  }
+
+  bool areFieldsValid() {
+    return login.isNotEmpty && password.isNotEmpty;
   }
 
   //todo: fix second login without login/pass issue (may be stateful)
@@ -95,8 +128,8 @@ class _AuthState extends State<AuthPage> {
               'Content-Type': 'application/json; charset=UTF-8',
             },
             body: jsonEncode(<String, String>{
-              'login': loginController.value.text,
-              'password': passwordController.value.text,
+              'login': login,
+              'password': password,
             }))
         .then((response) {
       print("Response status: ${response.statusCode}");
