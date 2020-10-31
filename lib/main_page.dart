@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lct_security_band/profile_page.dart';
-import 'package:lct_security_band/tracking_page.dart';
+import 'package:lct_security_band/session_page.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -11,7 +11,7 @@ class MainPage extends StatefulWidget {
 
 class _MainState extends State<MainPage> {
   int _currentIndex = 0;
-  final List<Widget> _children = [TrackingPage(), ProfilePage()];
+  final List<Widget> _children = [SessionPage(), ProfilePage()];
 
   @override
   Widget build(BuildContext context) {

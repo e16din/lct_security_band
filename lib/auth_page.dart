@@ -5,30 +5,30 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:http/http.dart' as http;
 
 class AuthPage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return _AuthState();
   }
-
 }
 
 class _AuthState extends State<AuthPage> {
   ProgressDialog progressDialog;
 
-  TextEditingController loginController;
-  TextEditingController passwordController;
+  final loginController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     progressDialog = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: true);
     progressDialog.style(
       message: 'Пожалуйста подождите..',
     );
-    loginController = TextEditingController();
-     passwordController = TextEditingController();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         body: Stack(children: [
@@ -102,13 +102,21 @@ class _AuthState extends State<AuthPage> {
       print("Response status: ${response.statusCode}");
       print("Response body: ${response.body}");
 
-      progressDialog.hide();
+      Future.delayed(Duration(milliseconds: 600)).then((value) {
+        progressDialog.hide();
 
-      if (response.body.contains('User exists')) {
-        Navigator.pushNamed(context, '/MainPage');
-      }
+        if (response.body.contains('User exists')) {
+          Navigator.pushNamed(context, '/MainPage');
+        }
+      });
     }).catchError((error) {
       print("Error: $error");
+      hideProgressDialog();
+    });
+  }
+
+  void hideProgressDialog() {
+    Future.delayed(Duration(milliseconds: 600)).then((value) {
       progressDialog.hide();
     });
   }

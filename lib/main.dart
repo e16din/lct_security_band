@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lct_security_band/main_page.dart';
 import 'package:lct_security_band/profile_page.dart';
-import 'package:lct_security_band/tracking_page.dart';
+import 'package:lct_security_band/session_page.dart';
 import 'auth_page.dart';
 
 void main() {
@@ -49,8 +49,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => MainPage());
       case '/ProfilePage':
         return MaterialPageRoute(builder: (_) => ProfilePage());
-      case '/TrackingPage':
-        return MaterialPageRoute(builder: (_) => TrackingPage());
+      case '/SessionPage':
+        return MaterialPageRoute(builder: (_) => SessionPage());
       default:
         return _errorRoute();
       // return MaterialPageRoute(builder: (_) => Page1());
