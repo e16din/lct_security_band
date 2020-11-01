@@ -5,7 +5,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 
-var token = '';
+import 'auth_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -20,8 +20,8 @@ class _LoginState extends State<LoginPage> {
   final loginController = TextEditingController();
   final passwordController = TextEditingController();
 
-  var login = '';
-  var password = '';
+  var loginValue = '';
+  var passwordValue = '';
 
   var _onLoginClickAction = () {};
 
@@ -36,14 +36,14 @@ class _LoginState extends State<LoginPage> {
 
     loginController.addListener(() {
       setState(() {
-        login = loginController.text;
+        loginValue = loginController.text;
         updateLoginClickActionState();
       });
     });
 
     passwordController.addListener(() {
       setState(() {
-        password = passwordController.text;
+        passwordValue = passwordController.text;
         updateLoginClickActionState();
       });
     });
@@ -115,17 +115,18 @@ class _LoginState extends State<LoginPage> {
   }
 
   bool areFieldsValid() {
-    return login.isNotEmpty && password.isNotEmpty;
+    return loginValue.isNotEmpty && passwordValue.isNotEmpty;
   }
 
   //todo: fix second login without login/pass issue (may be stateful)
   void onLoginClick(BuildContext context) {
     progressDialog.show();
 
-    var passBytes = utf8.encode(password);
+    var passBytes = utf8.encode(passwordValue);
     var hashpass = sha256.convert(passBytes).toString();
+    var localLogin = loginValue;
     var json = jsonEncode(<String, dynamic>{
-      'login': login,
+      'login': localLogin,
       'hashpass': hashpass,
     });
     print('request: $json');
@@ -149,6 +150,8 @@ class _LoginState extends State<LoginPage> {
         if (response.statusCode == 200) {
           var parsedJson = jsonDecode(response.body);
           token = parsedJson['token'];
+          login = localLogin;
+
           print("token: $token");
 
           Navigator.pushNamed(context, '/MainPage');

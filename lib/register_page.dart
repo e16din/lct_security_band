@@ -5,6 +5,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 
+import 'auth_page.dart';
 import 'login_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -22,10 +23,10 @@ class _RegisterState extends State<RegisterPage> {
   final loginController = TextEditingController();
   final passwordController = TextEditingController();
 
-  var name = '';
-  var phone = '';
-  var login = '';
-  var password = '';
+  var nameValue = '';
+  var phoneValue = '';
+  var loginValue = '';
+  var passwordValue = '';
 
   var _onLoginClickAction = () {};
 
@@ -40,26 +41,26 @@ class _RegisterState extends State<RegisterPage> {
 
     nameController.addListener(() {
       setState(() {
-        name = nameController.text;
+        nameValue = nameController.text;
       });
     });
 
     phoneController.addListener(() {
       setState(() {
-        phone = phoneController.text;
+        phoneValue = phoneController.text;
       });
     });
 
     loginController.addListener(() {
       setState(() {
-        login = loginController.text;
+        loginValue = loginController.text;
         updateLoginClickActionState();
       });
     });
 
     passwordController.addListener(() {
       setState(() {
-        password = passwordController.text;
+        passwordValue = passwordController.text;
         updateLoginClickActionState();
       });
     });
@@ -157,20 +158,21 @@ class _RegisterState extends State<RegisterPage> {
   }
 
   bool areFieldsValid() {
-    return login.isNotEmpty && password.isNotEmpty;
+    return loginValue.isNotEmpty && passwordValue.isNotEmpty;
   }
 
   //todo: fix second login without login/pass issue (may be stateful)
   void onLoginClick(BuildContext context) {
     progressDialog.show();
 
-    var passBytes = utf8.encode(password);
+    var passBytes = utf8.encode(passwordValue);
     var hashpass = sha256.convert(passBytes).toString();
+    var localLogin = loginValue;
     var json = jsonEncode(<String, dynamic>{
-      'login': login,
+      'login': localLogin,
       'hashpass': hashpass,
-      "workername": name,
-      "phone": phone,
+      "workername": nameValue,
+      "phone": phoneValue,
       "idobject": 1,
     });
     print('request: $json');
@@ -194,6 +196,7 @@ class _RegisterState extends State<RegisterPage> {
         if (response.statusCode == 200) {
           var parsedJson = jsonDecode(response.body);
           token = parsedJson['token'];
+          login = localLogin;
           print("token: $token");
 
           Navigator.pushNamed(context, '/MainPage');

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lct_security_band/login_page.dart';
 import 'package:lct_security_band/register_page.dart';
 
+var token = '';
+var login = '';
+
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
